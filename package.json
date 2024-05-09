@@ -1,0 +1,18 @@
+{
+  "name": "playwright-test-2",
+  "version": "1.0.0",
+  "description": "another test",
+  "main": "index.js",
+  "scripts": {
+    "test": "npx playwright test --ui",
+    "generate:report": "npx playwright show-report",
+    "execute": "npx playwright test --ui && npx playwright show-report"
+  },
+  "keywords": [],
+  "author": "Carol",
+  "license": "ISC",
+  "devDependencies": {
+    "@playwright/test": "^1.44.0",
+    "@types/node": "^20.12.11"
+  }
+}
