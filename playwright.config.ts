@@ -11,6 +11,11 @@ import { defineConfig, devices } from '@playwright/test';
  */
 export default defineConfig({
   testDir: 'tests',
+    // Glob patterns or regular expressions to ignore test files.
+    //testIgnore: '*test-assets',
+
+    // Glob patterns or regular expressions that match test files.
+    //testMatch: 'assignment.ts',
   /* Run tests in files in parallel */
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */

@@ -1,49 +1,40 @@
-// Prerequisites:
-// - Ensure you have Node.js and npm installed.
-// - Install the necessary dependencies using: npm install webdriverio @wdio/cli
-
-// Import necessary modules
 import { test, expect } from '@playwright/test';
 
-// Configuration for WebDriverIO
-const config = {
-    runner: 'local',
-    specs: ['./test/specs/*.js'], // Path to your test files
-    capabilities: [{
-        browserName: 'chrome', // You can choose other browsers as well
-    }],
-    logLevel: 'info',
-    bail: 0,
-    baseUrl: 'https://www.bbc.co.uk/sport', // Base URL for your tests
-    waitforTimeout: 10000,
-    connectionRetryTimeout: 120000,
-    connectionRetryCount: 3,
-};
+(async () => {
+    let browser: Browser | undefined;
+    try {
+        // Launch a new browser instance (you can choose 'firefox' or 'webkit' as well)
+        browser = await chromium.launch();
 
-// Initialize WebDriverIO
-const browser = await remote(config);
+        // Create a new page
+        const page: Page = await browser.newPage();
 
-// Example test
-describe('BBC Sport Search', () => {
-    it('should search for "football" and verify results', async () => {
         // Navigate to the BBC Sport website
-        await browser.url('/');
+        await page.goto('https://www.bbc.co.uk/sport');
 
         // Find the search input field and enter "football"
-        const searchInput = await browser.$('#orb-search-q');
-        await searchInput.setValue('football');
-        await searchInput.keys('Enter');
+        await page.fill('#orb-search-q', 'football');
+        await page.press('#orb-search-q', 'Enter');
 
         // Wait for search results to load
-        await browser.waitForExist('.search-results');
+        await page.waitForSelector('.search-results');
 
-        // Verify that the search results contain the word "football"
-        const searchResults = await browser.getText('.search-results');
-        expect(searchResults).toContain('football');
+        // Get the search results text
+        const searchResultsText = await page.textContent('.search-results');
 
-        // Additional assertions or actions can be added here
-    });
-});
+        // Perform assertions
+        if (searchResultsText.includes('football')) {
+            console.log('Search results contain the word "football". Test passed!');
+        } else {
+            console.error('Search results do not contain the word "football". Test failed.');
+        }
 
-// Close the browser session
-await browser.deleteSession();
+        // Close the browser
+        await browser.close();
+    } catch (error) {
+        console.error('Error occurred:', error);
+        if (browser) {
+            await browser.close();
+        }
+    }
+})();
