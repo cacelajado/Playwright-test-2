@@ -1,40 +1,18 @@
 import { test, expect } from '@playwright/test';
 
-(async () => {
-    let browser: Browser | undefined;
-    try {
-        // Launch a new browser instance (you can choose 'firefox' or 'webkit' as well)
-        browser = await chromium.launch();
+test('Search for "Football" on BBC Sport', async ({ page }) => {
+  // Step 1: Navigate to https://www.bbc.co.uk/sport
+  await page.goto('https://www.bbc.co.uk/sport');
 
-        // Create a new page
-        const page: Page = await browser.newPage();
+  // Step 2: Locate the search field
+  const searchField = await page.locator('input[name="q"]');
+  await searchField.fill('Football');
 
-        // Navigate to the BBC Sport website
-        await page.goto('https://www.bbc.co.uk/sport');
+  // Step 3: Click the Search button
+  const searchButton = await page.locator('button[type="submit"]');
+  await searchButton.click();
 
-        // Find the search input field and enter "football"
-        await page.fill('#orb-search-q', 'football');
-        await page.press('#orb-search-q', 'Enter');
-
-        // Wait for search results to load
-        await page.waitForSelector('.search-results');
-
-        // Get the search results text
-        const searchResultsText = await page.textContent('.search-results');
-
-        // Perform assertions
-        if (searchResultsText.includes('football')) {
-            console.log('Search results contain the word "football". Test passed!');
-        } else {
-            console.error('Search results do not contain the word "football". Test failed.');
-        }
-
-        // Close the browser
-        await browser.close();
-    } catch (error) {
-        console.error('Error occurred:', error);
-        if (browser) {
-            await browser.close();
-        }
-    }
-})();
+  // Step 4: Verify results
+  const results = await page.locator('.search-results');
+  await expect(results).toHaveText('Football');
+});
